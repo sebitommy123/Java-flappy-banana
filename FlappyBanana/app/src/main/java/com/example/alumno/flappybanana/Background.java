@@ -9,28 +9,31 @@ import android.graphics.Paint;
 /**
  * Created by Alumno on 10/01/2016.
  */
-public class Tubo implements Dibujable{
+public class Background implements Dibujable{
 
-    float ancho = 100;
-    float alto = MainActivity.ALTO-400;
+    float ancho = MainActivity.ANCHO*2;
+    float alto = MainActivity.ALTO;
     Bitmap b;
 
     float sx = 0;
     float sy = 0;
     float x = 0;
     float y = 0;
-    float vx = -MainActivity.ANCHO/3.0f;
+    float vx = -MainActivity.ANCHO/6.0f;
 
     Paint p = new Paint();
 
-    public Tubo(Context context){
-        b = BitmapFactory.decodeResource(context.getResources(), R.drawable.tubo);
+    public Background(Context context){
+        b = BitmapFactory.decodeResource(context.getResources(), R.drawable.sunrisebackground);
         b = Bitmap.createScaledBitmap(b,(int)ancho,(int)alto,true);
     }
 
     @Override
     public void dibujar(Canvas c) {
+
         c.drawBitmap(b, (int)x,(int)y,p);
+        c.drawBitmap(b, (int)x-MainActivity.ANCHO*2,(int)y,p);
+
     }
 
     @Override
@@ -84,10 +87,8 @@ public class Tubo implements Dibujable{
     public void mover(float tiempoTranscurrido) {
 
         x = x + vx * tiempoTranscurrido;
-        if (x <= -getAncho()){
-            x = sx+getAncho();
-            Banana.score += 1;
-            vx = -MainActivity.ANCHO/3.0f - Banana.score*10;
+        if (x <= -MainActivity.ANCHO){
+            x = MainActivity.ANCHO;
 
         }
     }

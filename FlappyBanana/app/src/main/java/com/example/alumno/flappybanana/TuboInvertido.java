@@ -19,7 +19,7 @@ public class TuboInvertido implements Dibujable{
     float sy = 0;
     float x = 0;
     float y = 0;
-    float vx = -300;
+    float vx = -MainActivity.ANCHO/3.0f;
     Tubo tubo;
 
     Paint p = new Paint();
@@ -45,6 +45,16 @@ public class TuboInvertido implements Dibujable{
     public void setY(float y) {
         this.y = y;
         this.sy = y;
+    }
+
+    @Override
+    public void setVY(float vy) {
+
+    }
+
+    @Override
+    public void setVX(float vx) {
+
     }
 
     @Override
@@ -82,6 +92,8 @@ public class TuboInvertido implements Dibujable{
 
             setY(-number);
             tubo.setY(y + alto + 300);
+            vx = -MainActivity.ANCHO/3.0f - Banana.score*10;
+
         }
     }
 

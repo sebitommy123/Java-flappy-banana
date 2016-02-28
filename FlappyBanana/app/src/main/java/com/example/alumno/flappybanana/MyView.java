@@ -9,6 +9,17 @@ import android.view.View;
 
 import com.example.alumno.flappybanana.Dibujable;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -16,16 +27,31 @@ import java.util.ArrayList;
  */
 public class MyView extends View {
 
+
+
+
     static boolean running = true;
 
     private ArrayList<Dibujable> dibujables = new ArrayList<>();
 
+    Thread t;
+
+    final Tubo tubo;
+    final TuboInvertido tuboInvertido;
+    final Banana banana;
+    final Background background;
+
     public MyView(Context context) {
 
         super(context);
-        final Tubo tubo = new Tubo(context);
-        final TuboInvertido tuboInvertido = new TuboInvertido(context, tubo);
-        final Banana banana = new Banana(context, tubo, tuboInvertido);
+        tubo = new Tubo(context);
+        tuboInvertido = new TuboInvertido(context, tubo);
+
+        background = new Background(context);
+
+        banana = new Banana(context, tubo, tuboInvertido, this);
+        banana.setVY(0);
+        banana.setVX(0);
         banana.setX((banana.getAncho()));
         banana.setY((MainActivity.ALTO - banana.getAlto()) / 2 + 10);
 
@@ -35,6 +61,7 @@ public class MyView extends View {
         tubo.setX(MainActivity.ANCHO - tubo.getAncho());
         tubo.setY(-250 + MainActivity.ALTO - 400 + 300);
 
+        dibujables.add(background);
         dibujables.add(banana);
         dibujables.add(tubo);
         dibujables.add(tuboInvertido);
@@ -47,26 +74,33 @@ public class MyView extends View {
         });
 
 
-        Thread t = new Thread(new Runnable() {
+        t = new Thread(new Runnable() {
             public long tiempoAnterior = System.currentTimeMillis();
 
             @Override
             public void run() {
-                while (running){
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    long tiempoActual = System.currentTimeMillis();
-                    long tt = tiempoActual - tiempoAnterior;
-                    tiempoAnterior = tiempoActual;
+                while (true){
+                    if(running) {
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        long tiempoActual = System.currentTimeMillis();
+                        long tt = tiempoActual - tiempoAnterior;
+                        tiempoAnterior = tiempoActual;
 
-                    for(Dibujable d : dibujables){
-                        d.mover(tt/1000f);
-                    }
+                        for (Dibujable d : dibujables) {
+                            d.mover(tt / 1000f);
+                        }
 
-                    postInvalidate();
+                        postInvalidate();
+
+                    }else{
+                        long tiempoActual = System.currentTimeMillis();
+                        long tt = tiempoActual - tiempoAnterior;
+                        tiempoAnterior = tiempoActual;
+                    }
                 }
             }
         });
@@ -82,7 +116,7 @@ public class MyView extends View {
         }
         Paint paint = new Paint();
         paint.setTextSize(100);
-        canvas.drawText("" + Banana.score,0,75,paint);
+        canvas.drawText("" + Banana.score,MainActivity.ANCHO/2,75,paint);
 
     }
 
@@ -90,6 +124,29 @@ public class MyView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
     }
+
+    public void restart(){
+        Banana.score = 0;
+
+        banana.setVX(0);
+        banana.setVY(0);
+        banana.setX((banana.getAncho()));
+        banana.setY((MainActivity.ALTO - banana.getAlto()) / 2 + 10);
+
+        tuboInvertido.setX(MainActivity.ANCHO - tubo.getAncho());
+        tuboInvertido.setY(-250);
+
+        tubo.setX(MainActivity.ANCHO - tubo.getAncho());
+        tubo.setY(-250 + MainActivity.ALTO - 400 + 300);
+
+        running = true;
+
+
+
+    }
+
+
+
 
 
 

@@ -9,6 +9,8 @@ public interface Dibujable {
     public void dibujar(Canvas c);
     public void setX(float x);
     public void setY(float y);
+    public void setVY(float vy);
+    public void setVX(float vx);
     public float getAncho();
     public float getAlto();
     public void onSizeChanged(int w, int h, int oldw, int oldh);

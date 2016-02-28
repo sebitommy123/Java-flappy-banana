@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 /**
  * Created by Antonio on 20/12/2015.
@@ -15,6 +14,7 @@ public class Banana implements Dibujable {
 
 
     public final float GRAVEDAD = (float) ((2.0/3.0)*MainActivity.ALTO);
+    private final MyView myView;
 
 
     float ancho = 100;
@@ -34,8 +34,9 @@ public class Banana implements Dibujable {
 
     Paint p = new Paint();
 
-    public Banana(Context context, Tubo tubo, TuboInvertido tuboInvertido){
+    public Banana(Context context, Tubo tubo, TuboInvertido tuboInvertido, MyView myView){
         this.context = context;
+        this.myView = myView;
         this.tubo = tubo;
         this.tuboInvertido = tuboInvertido;
         b = BitmapFactory.decodeResource(context.getResources(), R.drawable.banana);
@@ -55,6 +56,16 @@ public class Banana implements Dibujable {
     @Override
     public void setY(float y) {
         this.y = y;
+    }
+
+    @Override
+    public void setVY(float vy) {
+        this.vy = vy;
+    }
+
+    @Override
+    public void setVX(float vx) {
+        this.vx = vx;
     }
 
     @Override
@@ -98,6 +109,7 @@ public class Banana implements Dibujable {
 
         if (MyView.running && (colision(tubo) || colision(tuboInvertido))){
             MyView.running = false;
+            DeathScreen.myView = myView;
             Intent i = new Intent(context, DeathScreen.class);
             i.putExtra("score","" + score);
             context.startActivity(i);
